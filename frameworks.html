@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tech Stack Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is designed as a single-page dashboard with a sticky top navigation for easy access to key sections: an 'Overview' for a high-level summary, an interactive 'Cloud Provider Comparison' with a dynamic radar chart and detailed provider cards, a filterable 'Framework Showcase' to compare web frameworks, and a scenario-based 'Strategic Recommendations' section. This non-linear, thematic structure was chosen to empower users to explore the complex report data based on their specific interests (e.g., comparing providers directly or understanding framework options) rather than forcing them through a linear narrative, thus enhancing usability and information discovery. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Multi-metric comparison of cloud provider free tiers (bandwidth, compute, database, etc.). Goal: Compare. Viz/Method: Interactive Radar Chart (Chart.js/Canvas). Interaction: Hover for details, dropdown to filter providers. Justification: Provides an immediate, multi-dimensional visual summary of provider strengths, which is more engaging and quicker to parse than a large table.
+        - Report Info: Detailed characteristics of various web frameworks. Goal: Organize & Inform. Viz/Method: Filterable content cards (HTML/Tailwind). Interaction: Clickable tabs to switch between 'Frontend' and 'Full-Stack' categories. Justification: Uses a familiar and intuitive UI pattern to manage complexity and allow users to focus on the framework category relevant to them.
+        - Report Info: Scenario-based recommendations for different project types. Goal: Guide & Inform. Viz/Method: Accordion component (HTML/JS). Interaction: Click to expand/collapse detailed recommendations. Justification: A space-efficient method to present deep-dive information without overwhelming the user, promoting focused exploration.
+        - Report Info: Key quantitative limits from free tiers. Goal: Inform. Viz/Method: Large, bold "Key Stat" callouts within provider cards. Interaction: None. Justification: Draws immediate attention to the most critical data points for each provider.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #1a202c;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 60vh;
+            max-height: 500px;
+            width: 100%;
+            max-width: 700px;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #4A90E2;
+        }
+        .active-tab {
+            border-color: #4A90E2;
+            color: #4A90E2;
+            font-weight: 600;
+        }
+        .kpi-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #E2E8F0;
+        }
+        .provider-card, .framework-card, .recommendation-card {
+             background-color: #ffffff;
+             border-radius: 0.75rem;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+             border: 1px solid #E2E8F0;
+             transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .provider-card:hover, .framework-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm border-b border-gray-200">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800">Tech Stack Analyzer</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link text-gray-600 border-b-2 border-transparent">Overview</a>
+                <a href="#comparison" class="nav-link text-gray-600 border-b-2 border-transparent">Cloud Comparison</a>
+                <a href="#frameworks" class="nav-link text-gray-600 border-b-2 border-transparent">Frameworks</a>
+                <a href="#recommendations" class="nav-link text-gray-600 border-b-2 border-transparent">Recommendations</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+             <a href="#overview" class="block py-2 text-gray-600">Overview</a>
+             <a href="#comparison" class="block py-2 text-gray-600">Cloud Comparison</a>
+             <a href="#frameworks" class="block py-2 text-gray-600">Frameworks</a>
+             <a href="#recommendations" class="block py-2 text-gray-600">Recommendations</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+
+        <section id="overview" class="mb-16 md:mb-24 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Choosing Your Modern Web Tech Stack</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12">
+                This interactive application synthesizes comprehensive reports on web frameworks and cloud hosting. It's designed to help you navigate the complex decisions around building highly interactive, secure, and cost-effective web applications by leveraging the best of modern technology and generous free tiers.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="kpi-card">
+                    <h3 class="text-xl font-semibold mb-2 text-blue-600">High Interactivity</h3>
+                    <p class="text-gray-600">Explore frameworks optimized for dynamic UIs, real-time updates, and seamless user experiences, from client-side rendering SPAs to server-rendered hybrid models.</p>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-xl font-semibold mb-2 text-green-600">Robust Security</h3>
+                    <p class="text-gray-600">Understand the security landscape, from framework-level best practices to platform-provided DDoS mitigation, WAFs, and automated SSL encryption.</p>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-xl font-semibold mb-2 text-purple-600">Cost-Effectiveness</h3>
+                    <p class="text-gray-600">Compare the most generous "Always Free" tiers from major cloud providers to minimize costs during development and for small-scale production workloads.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="mb-16 md:mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Cloud Provider Free Tier Comparison</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                    Choosing a cloud provider involves balancing cost, performance, and features. This section provides a comparative analysis of the most popular free tiers. Use the interactive chart to get a quick overview, or dive into the detailed cards for a full breakdown of each provider's offerings for hosting a modern web application.
+                </p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-12">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 sm:mb-0">Free Tier Generosity Score</h3>
+                    <div class="w-full sm:w-auto">
+                        <label for="provider-select" class="sr-only">Select Providers</label>
+                        <select id="provider-select" multiple class="form-multiselect block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="providerRadarChart"></canvas>
+                </div>
+            </div>
+
+            <div id="provider-details" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+
+        <section id="frameworks" class="mb-16 md:mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Framework Showcase</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                    The right framework is the foundation of your application. Here's a look at leading options, categorized by their primary focus, to help you understand their strengths in building interactive and secure websites.
+                </p>
+            </div>
+            <div class="flex justify-center mb-8 border-b border-gray-200">
+                <button data-category="full-stack" class="framework-tab py-4 px-6 block hover:text-blue-500 focus:outline-none border-b-2 font-medium text-gray-500 active-tab">Full-Stack</button>
+                <button data-category="frontend" class="framework-tab py-4 px-6 block hover:text-blue-500 focus:outline-none border-b-2 font-medium text-gray-500">Frontend-Focused</button>
+                <button data-category="backend" class="framework-tab py-4 px-6 block hover:text-blue-500 focus:outline-none border-b-2 font-medium text-gray-500">Backend/Legacy</button>
+            </div>
+            <div id="framework-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+
+        <section id="recommendations">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Strategic Recommendations</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                    Based on the analysis, here are tailored recommendations for different project types. The optimal choice often involves a hybrid approach, combining the strengths of multiple platforms to achieve the best balance of performance, features, and cost.
+                </p>
+            </div>
+            <div id="recommendation-list" class="space-y-4 max-w-4xl mx-auto">
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-500">
+            <p>Interactive Application created by Gemini.</p>
+            <p>Data synthesized from reports on web frameworks and cloud hosting free tiers.</p>
+        </div>
+    </footer>
+
+
+<script>
+const AppData = {
+    providers: [
+        {
+            id: 'vercel',
+            name: 'Vercel',
+            description: 'A platform highly optimized for frontend frameworks, especially Next.js, offering a superior developer experience and zero-configuration deployment.',
+            strengths: ['Best-in-class Next.js integration', 'Excellent DX & CI/CD', 'Generous bandwidth (100GB)', 'Built-in Image Optimization & ISR'],
+            limitations: ['STRICTLY NON-COMMERCIAL use on free tier', 'Short 10s function timeout', 'Potential vendor lock-in'],
+            keyStat: '100 GB',
+            keyStatLabel: 'Bandwidth/Month',
+            scores: { bandwidth: 8, compute: 6, database: 1, security: 7, dx: 10 }
+        },
+        {
+            id: 'cloudflare',
+            name: 'Cloudflare',
+            description: 'An edge-first platform with a vast global network, excelling at static hosting, serverless functions (Workers), and security.',
+            strengths: ['Unmetered DDoS & Free WAF', 'No egress charges for Workers', 'Unlimited static asset requests', 'Extremely fast "no cold start" workers'],
+            limitations: ['Tight 10ms CPU limit for Workers', 'KV store is not a full database', 'Account-wide build limits'],
+            keyStat: '100K/day',
+            keyStatLabel: 'Worker Requests',
+            scores: { bandwidth: 9, compute: 7, database: 3, security: 10, dx: 8 }
+        },
+        {
+            id: 'azure',
+            name: 'Azure',
+            description: 'A comprehensive cloud platform with strong support for modern web apps via Static Web Apps and a powerful, integrated ecosystem.',
+            strengths: ['LIFETIME FREE Cosmos DB (1000 RU/s, 25GB)', 'Generous Functions tier (1M executions)', '100GB bandwidth for Static Web Apps', 'Excellent CI/CD integration'],
+            limitations: ['Default spending limit can halt services', 'Initial credits are time-limited', 'Requires some management'],
+            keyStat: 'Lifetime',
+            keyStatLabel: 'Free NoSQL DB',
+            scores: { bandwidth: 8, compute: 8, database: 9, security: 6, dx: 7 }
+        },
+        {
+            id: 'aws',
+            name: 'AWS',
+            description: 'The largest cloud provider with a vast ecosystem. Offers powerful "Always Free" serverless and database components.',
+            strengths: ['Always Free DynamoDB (200M req/mo)', 'Always Free Lambda (1M req/mo)', 'Highly scalable ecosystem', 'Amplify for Next.js hosting'],
+            limitations: ['Complex free tier (12-mo vs. Always Free)', 'LOW aggregated bandwidth limit (15GB)', 'Requires active cost monitoring'],
+            keyStat: '200M',
+            keyStatLabel: 'DB Requests/Month',
+            scores: { bandwidth: 4, compute: 8, database: 8, security: 5, dx: 6 }
+        },
+        {
+            id: 'gcp',
+            name: 'GCP & Firebase',
+            description: 'Offers a flexible serverless platform (Cloud Run) and a highly integrated Backend-as-a-Service (Firebase) with predictable costs.',
+            strengths: ['Firebase Spark plan caps usage (no surprise bills)', 'Generous Cloud Run free tier (2M requests)', 'Good Firestore DB limits (50k reads/day)'],
+            limitations: ['Firebase caps can interrupt service', 'GCP free tier relies on time-limited credits', 'Lower bandwidth on Firebase'],
+            keyStat: 'Capped',
+            keyStatLabel: 'Usage Model (Firebase)',
+            scores: { bandwidth: 5, compute: 9, database: 7, security: 5, dx: 7 }
+        },
+        {
+            id: 'oracle',
+            name: 'Oracle (OCI)',
+            description: 'Notable for its extremely generous "Always Free" resources, especially for compute and outbound data transfer.',
+            strengths: ['UNMATCHED 10TB/month egress', 'Generous Always Free Arm VMs (4 OCPU, 24GB RAM)', 'Multiple Always Free database options'],
+            limitations: ['Requires VM management (less "zero-config")', 'DB inactivity policy can stop instances', 'Less Next.js-specific tooling'],
+            keyStat: '10 TB',
+            keyStatLabel: 'Egress/Month',
+            scores: { bandwidth: 10, compute: 10, database: 9, security: 4, dx: 4 }
+        }
+    ],
+    frameworks: [
+        {
+            id: 'nextjs',
+            name: 'Next.js',
+            category: 'full-stack',
+            description: 'A React framework for production. Excels at hybrid rendering (SSG, SSR, ISR), providing excellent performance and developer experience.',
+            tags: ['React', 'Full-Stack', 'SSR', 'High Performance']
+        },
+        {
+            id: 'remix',
+            name: 'Remix',
+            category: 'full-stack',
+            description: 'A full-stack web framework that emphasizes web standards, nested routing, and server-side rendering for robust and resilient user experiences.',
+            tags: ['Web Standards', 'Full-Stack', 'SSR']
+        },
+        {
+            id: 'vite-react',
+            name: 'Vite + React',
+            category: 'frontend',
+            description: 'Combines the power of React\'s component model with Vite\'s next-generation frontend tooling for an extremely fast and efficient development workflow.',
+            tags: ['React', 'Frontend', 'Fast Dev', 'SPA']
+        },
+        {
+            id: 'angular',
+            name: 'Angular',
+            category: 'frontend',
+            description: 'A comprehensive, opinionated framework from Google, ideal for large-scale, enterprise-grade Single Page Applications (SPAs).',
+            tags: ['TypeScript', 'Enterprise', 'SPA', 'Structured']
+        },
+        {
+            id: 'vuejs',
+            name: 'Vue.js',
+            category: 'frontend',
+            description: 'A progressive and approachable framework known for its flexibility and gentle learning curve, powerful enough for complex applications.',
+            tags: ['Progressive', 'Frontend', 'Flexible', 'SPA']
+        },
+        {
+            id: 'svelte',
+            name: 'Svelte',
+            category: 'frontend',
+            description: 'A radical new approach that compiles your code to tiny, framework-less vanilla JS, resulting in exceptional performance and fast load times.',
+            tags: ['Compiler', 'High Performance', 'No Runtime']
+        },
+        {
+            id: 'laravel',
+            name: 'Laravel',
+            category: 'backend',
+            description: 'A widely popular PHP framework for building robust and scalable web applications and APIs, with strong built-in security features.',
+            tags: ['PHP', 'Backend', 'API', 'Secure']
+        },
+        {
+            id: 'phoenix',
+            name: 'Phoenix',
+            category: 'backend',
+            description: 'Built on Elixir, renowned for high concurrency and real-time capabilities, especially with Phoenix LiveView for interactive UIs with minimal JS.',
+            tags: ['Elixir', 'Real-time', 'LiveView', 'Concurrent']
+        },
+        {
+            id: 'jquery',
+            name: 'jQuery',
+            category: 'backend',
+            description: 'A classic JavaScript library that simplifies DOM manipulation. Considered a legacy choice for new, highly interactive sites but still used for enhancing existing pages.',
+            tags: ['Legacy', 'DOM Manipulation', 'Library']
+        },
+    ],
+    recommendations: [
+        {
+            title: 'For Minimalist Dashboards & Personal Projects',
+            content: 'For sites that are primarily static with light API usage, prioritize platforms with excellent static hosting and edge functions. <strong>Cloudflare Pages + Workers</strong> is a top choice due to unlimited static requests, no egress charges for Workers, and superior free security. <strong>Vercel</strong> is also excellent for its developer experience, but only if the project is strictly non-commercial. <strong>Azure Static Web Apps</strong> offers a great balance with 100GB of bandwidth and integrated functions.'
+        },
+        {
+            title: 'For Data-Intensive & Interactive Dashboards',
+            content: 'When your dashboard relies heavily on a database, the provider\'s free database offering is critical. <strong>Azure</strong> is highly recommended for its <strong>lifetime free Cosmos DB</strong>, providing a robust, persistent NoSQL solution. <strong>AWS with its Always Free Lambda and DynamoDB</strong> is another strong contender, offering a powerful serverless backend. For dashboards with very high traffic or large data transfers, <strong>Oracle (OCI)</strong> is unmatched due to its <strong>10TB/month egress allowance</strong> and generous free compute VMs.'
+        },
+        {
+            title: 'Optimal Hybrid Strategy',
+            content: 'To maximize free tier benefits, a hybrid approach is often best. A powerful combination is to host your frontend on <strong>Cloudflare Pages</strong> for its superior static delivery and security, while connecting to a backend database hosted elsewhere. For the database, use <strong>Azure\'s lifetime free Cosmos DB</strong> for a robust, scalable NoSQL option or <strong>AWS\'s Always Free DynamoDB</strong>. This strategy combines best-in-class services for each part of your stack, minimizing costs and maximizing performance.'
+        }
+    ]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const providerDetailsContainer = document.getElementById('provider-details');
+    const frameworkListContainer = document.getElementById('framework-list');
+    const recommendationListContainer = document.getElementById('recommendation-list');
+    const providerSelect = document.getElementById('provider-select');
+    const frameworkTabs = document.querySelectorAll('.framework-tab');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    const colors = {
+        vercel: 'rgba(0, 0, 0, 0.7)',
+        cloudflare: 'rgba(243, 131, 33, 0.7)',
+        azure: 'rgba(0, 120, 212, 0.7)',
+        aws: 'rgba(255, 153, 0, 0.7)',
+        gcp: 'rgba(52, 168, 83, 0.7)',
+        oracle: 'rgba(220, 20, 60, 0.7)'
+    };
+    const borderColors = {
+        vercel: 'rgba(0, 0, 0, 1)',
+        cloudflare: 'rgba(243, 131, 33, 1)',
+        azure: 'rgba(0, 120, 212, 1)',
+        aws: 'rgba(255, 153, 0, 1)',
+        gcp: 'rgba(52, 168, 83, 1)',
+        oracle: 'rgba(220, 20, 60, 1)'
+    };
+
+    function populateProviderDetails() {
+        AppData.providers.forEach(provider => {
+            const card = document.createElement('div');
+            card.className = 'provider-card p-6';
+            card.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <div class="w-4 h-4 rounded-full mr-3" style="background-color: ${colors[provider.id]}"></div>
+                    <h4 class="text-xl font-bold text-gray-800">${provider.name}</h4>
+                </div>
+                <p class="text-gray-600 mb-4 h-20">${provider.description}</p>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <p class="text-3xl font-bold text-blue-600">${provider.keyStat}</p>
+                    <p class="text-sm text-blue-500 font-medium">${provider.keyStatLabel}</p>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-2 text-gray-700">Strengths:</h5>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 mb-4">
+                        ${provider.strengths.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                    <h5 class="font-semibold mb-2 text-gray-700">Limitations:</h5>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-red-600">
+                        ${provider.limitations.map(l => `<li>${l}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            providerDetailsContainer.appendChild(card);
+        });
+    }
+
+    function populateFrameworks(category) {
+        frameworkListContainer.innerHTML = '';
+        AppData.frameworks
+            .filter(f => f.category === category)
+            .forEach(framework => {
+                const card = document.createElement('div');
+                card.className = 'framework-card p-6';
+                card.innerHTML = `
+                    <h4 class="text-xl font-bold text-gray-800 mb-2">${framework.name}</h4>
+                    <p class="text-gray-600 mb-4 h-24">${framework.description}</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${framework.tags.map(tag => `<span class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
+                    </div>
+                `;
+                frameworkListContainer.appendChild(card);
+            });
+    }
+
+    function populateRecommendations() {
+        AppData.recommendations.forEach((rec, index) => {
+            const card = document.createElement('div');
+            card.className = 'recommendation-card border border-gray-200 rounded-lg overflow-hidden';
+            card.innerHTML = `
+                <button class="accordion-header w-full text-left p-4 bg-gray-50 hover:bg-gray-100 flex justify-between items-center focus:outline-none">
+                    <h4 class="text-lg font-semibold text-gray-800">${rec.title}</h4>
+                    <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content hidden p-6 bg-white">
+                    <p class="text-gray-600 leading-relaxed">${rec.content}</p>
+                </div>
+            `;
+            recommendationListContainer.appendChild(card);
+        });
+
+        document.querySelectorAll('.accordion-header').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('svg');
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+    }
+
+    function setupProviderSelector() {
+        AppData.providers.forEach(provider => {
+            const option = document.createElement('option');
+            option.value = provider.id;
+            option.textContent = provider.name;
+            option.selected = true;
+            providerSelect.appendChild(option);
+        });
+
+        providerSelect.addEventListener('change', updateRadarChart);
+    }
+    
+    let radarChart;
+    function createRadarChart() {
+        const ctx = document.getElementById('providerRadarChart').getContext('2d');
+        const initialDatasets = AppData.providers.map(provider => ({
+            label: provider.name,
+            data: Object.values(provider.scores),
+            backgroundColor: colors[provider.id],
+            borderColor: borderColors[provider.id],
+            borderWidth: 2,
+            pointBackgroundColor: borderColors[provider.id],
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: borderColors[provider.id]
+        }));
+
+        radarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Bandwidth', 'Compute', 'Database', 'Security', 'DevEx'],
+                datasets: initialDatasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: '#e2e8f0'
+                        },
+                        grid: {
+                            color: '#e2e8f0'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 14,
+                                weight: '500'
+                            },
+                            color: '#4a5568'
+                        },
+                        ticks: {
+                            backdropColor: 'rgba(255, 255, 255, 0.75)',
+                            stepSize: 2,
+                            font: {
+                                size: 10
+                            }
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateRadarChart() {
+        const selectedProviderIds = Array.from(providerSelect.selectedOptions).map(opt => opt.value);
+        const newDatasets = AppData.providers
+            .filter(p => selectedProviderIds.includes(p.id))
+            .map(provider => ({
+                label: provider.name,
+                data: Object.values(provider.scores),
+                backgroundColor: colors[provider.id],
+                borderColor: borderColors[provider.id],
+                borderWidth: 2,
+                pointBackgroundColor: borderColors[provider.id],
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: borderColors[provider.id]
+            }));
+        
+        radarChart.data.datasets = newDatasets;
+        radarChart.update();
+    }
+
+    frameworkTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            frameworkTabs.forEach(t => t.classList.remove('active-tab'));
+            tab.classList.add('active-tab');
+            populateFrameworks(tab.dataset.category);
+        });
+    });
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    populateProviderDetails();
+    populateFrameworks('full-stack');
+    populateRecommendations();
+    createRadarChart();
+    setupProviderSelector();
+});
+</script>
+
+</body>
+</html>
