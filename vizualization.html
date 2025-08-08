@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Tech Stack Comparison 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background-color: #1e1e2d;
+            border: 1px solid #334155;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .tag {
+            background-color: #334155;
+            color: #94a3b8;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .apexcharts-tooltip {
+            background: #1e1e2d !important;
+            color: #e2e8f0 !important;
+            border: 1px solid #334155 !important;
+        }
+        .section-title {
+            border-bottom: 2px solid;
+            border-image: linear-gradient(to right, #4f46e5, #ec4899) 1;
+            padding-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-2">
+                <span class="gradient-text">Tech Stack Analysis 2025</span>
+            </h1>
+            <p class="text-lg text-slate-400 max-w-3xl mx-auto">
+                A deep-dive comparison of cloud providers, frameworks, databases, and development tools based on detailed research.
+            </p>
+        </header>
+
+        <!-- Cloud Providers Section -->
+        <section id="cloud-providers" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 section-title">Cloud Provider Free Tier Showdown</h2>
+            <div class="card rounded-xl p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-slate-200">Free Tier Generosity Comparison</h3>
+                <div id="cloud-generosity-chart"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- AWS -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-3">AWS</h3>
+                    <div class="space-y-3 text-slate-300">
+                        <p><strong class="text-indigo-400">Generosity:</strong> Good 12-month trial. Always Free tier includes 1M Lambda requests/mo & 25GB DynamoDB.</p>
+                        <p><strong class="text-indigo-400">Performance:</strong> Mature, reliable, global presence.</p>
+                        <p><strong class="text-indigo-400">Complexity:</strong> High learning curve, vast service ecosystem.</p>
+                        <p><strong class="text-indigo-400">Best For:</strong> Enterprise apps, scalable services, those needing a wide array of tools.</p>
+                    </div>
+                </div>
+                <!-- Azure -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-3">Azure</h3>
+                    <div class="space-y-3 text-slate-300">
+                        <p><strong class="text-indigo-400">Generosity:</strong> Most generous with 54+ permanent free services and a $200 credit for 30 days.</p>
+                        <p><strong class="text-indigo-400">Performance:</strong> Strong hybrid cloud capabilities.</p>
+                        <p><strong class="text-indigo-400">Complexity:</strong> Complex portal, but excellent Microsoft integration.</p>
+                        <p><strong class="text-indigo-400">Best For:</strong> Enterprises in the Microsoft ecosystem, hybrid cloud setups.</p>
+                    </div>
+                </div>
+                <!-- GCP -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-3">GCP</h3>
+                    <div class="space-y-3 text-slate-300">
+                        <p><strong class="text-indigo-400">Generosity:</strong> Moderate, but focuses on high-value services like 1TB/mo BigQuery.</p>
+                        <p><strong class="text-indigo-400">Performance:</strong> Excellent for AI/ML and data analytics.</p>
+                        <p><strong class="text-indigo-400">Complexity:</strong> Developer-friendly, transparent pricing.</p>
+                        <p><strong class="text-indigo-400">Best For:</strong> AI/ML applications, data-intensive workloads.</p>
+                    </div>
+                </div>
+                <!-- Oracle Cloud -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-3">Oracle Cloud (OCI)</h3>
+                    <div class="space-y-3 text-slate-300">
+                        <p><strong class="text-indigo-400">Generosity:</strong> Extremely generous compute (4 Arm VMs, 24GB RAM) and 10TB egress.</p>
+                        <p><strong class="text-indigo-400">Performance:</strong> High performance for enterprise workloads.</p>
+                        <p><strong class="text-indigo-400">Complexity:</strong> Lower than major clouds, but Oracle-centric.</p>
+                        <p><strong class="text-indigo-400">Best For:</strong> Oracle database workloads, compute-heavy free projects.</p>
+                    </div>
+                </div>
+                <!-- Cloudflare -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-3">Cloudflare</h3>
+                    <div class="space-y-3 text-slate-300">
+                        <p><strong class="text-indigo-400">Generosity:</strong> Very generous for serverless (100k requests/day) and static hosting.</p>
+                        <p><strong class="text-indigo-400">Performance:</strong> Unmatched edge performance, minimal cold starts.</p>
+                        <p><strong class="text-indigo-400">Complexity:</strong> Low, highly developer-friendly.</p>
+                        <p><strong class="text-indigo-400">Best For:</strong> Edge computing, APIs, JAMstack sites, performance-critical frontends.</p>
+                    </div>
+                </div>
+                <!-- Vercel -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-3">Vercel</h3>
+                    <div class="space-y-3 text-slate-300">
+                        <p><strong class="text-indigo-400">Generosity:</strong> Excellent for frontend apps with serverless & edge functions.</p>
+                        <p><strong class="text-indigo-400">Performance:</strong> Top-tier for Next.js and frontend frameworks.</p>
+                        <p><strong class="text-indigo-400">Complexity:</strong> Low, seamless developer experience.</p>
+                        <p><strong class="text-indigo-400">Best For:</strong> Frontend applications, JAMstack sites, Next.js projects.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Frameworks Section -->
+        <section id="frameworks" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 section-title">Framework Deep Dive</h2>
+            <div class="card rounded-xl p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-slate-200">Framework Characteristics Radar</h3>
+                <div id="framework-radar-chart"></div>
+            </div>
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Laravel -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-2">Laravel (PHP)</h3>
+                    <div class="flex flex-wrap gap-2 mb-4"><span class="tag">Backend</span><span class="tag">High Security</span></div>
+                    <p class="text-slate-300">A mature "batteries-included" framework with excellent built-in security (ORM, CSRF, XSS protection). Great for traditional web apps, CMS, and e-commerce.</p>
+                </div>
+                <!-- Phoenix -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-2">Phoenix (Elixir)</h3>
+                    <div class="flex flex-wrap gap-2 mb-4"><span class="tag">Backend</span><span class="tag">High Concurrency</span></div>
+                    <p class="text-slate-300">Built for massive concurrency and real-time features with LiveView. High learning curve but unparalleled performance for sockets and real-time apps.</p>
+                </div>
+                <!-- Angular -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-2">Angular (TS)</h3>
+                    <div class="flex flex-wrap gap-2 mb-4"><span class="tag">Frontend</span><span class="tag">Enterprise Ready</span></div>
+                    <p class="text-slate-300">A full-fledged MVC framework with robust security and TypeScript by default. Ideal for large, complex enterprise SPAs and secure dashboards.</p>
+                </div>
+                <!-- Next.js -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-2">Next.js (React)</h3>
+                    <div class="flex flex-wrap gap-2 mb-4"><span class="tag">Full-stack</span><span class="tag">High Performance</span></div>
+                    <p class="text-slate-300">The leading React framework, excelling at SSR and SSG for top-tier performance and SEO. Perfect for e-commerce, marketing sites, and modern web apps.</p>
+                </div>
+                <!-- Svelte -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-2">Svelte</h3>
+                    <div class="flex flex-wrap gap-2 mb-4"><span class="tag">Frontend</span><span class="tag">Blazing Fast</span></div>
+                    <p class="text-slate-300">A compiler that produces highly optimized, boilerplate-free JavaScript. Results in tiny bundles and fantastic runtime performance. Great for interactive UIs.</p>
+                </div>
+                <!-- Solid.js -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-2">Solid.js</h3>
+                    <div class="flex flex-wrap gap-2 mb-4"><span class="tag">Frontend</span><span class="tag">Peak Performance</span></div>
+                    <p class="text-slate-300">Offers the best runtime performance via fine-grained reactivity, avoiding a Virtual DOM. For when every millisecond of performance is critical.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stacks & Databases -->
+        <section id="stacks-databases" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 section-title">Tech Stacks & Data Stores</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Tech Stacks -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-slate-200">Classic vs. Modern Stacks</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-bold text-lg text-pink-400">LAMP Stack</h4>
+                            <p class="text-sm text-slate-400">Linux, Apache, MySQL, PHP</p>
+                            <p class="text-slate-300 mt-1">The battle-tested classic. Mature and reliable, great for traditional sites and CMS like WordPress.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-pink-400">MERN Stack</h4>
+                            <p class="text-sm text-slate-400">MongoDB, Express, React, Node.js</p>
+                            <p class="text-slate-300 mt-1">The most popular JS-based stack. Excellent for dynamic SPAs and rapid development with a unified language.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-pink-400">Modern Alternatives (e.g., T3 Stack)</h4>
+                             <p class="text-sm text-slate-400">Next.js, TypeScript, Prisma, tRPC, Tailwind</p>
+                            <p class="text-slate-300 mt-1">Focus on full-stack type safety and developer experience. Provides end-to-end type inference without code generation.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Databases & Caching -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-slate-200">Database & Cache Comparison</h3>
+                    <div id="database-comparison-chart"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DevOps & LLMs -->
+        <section id="devops-llms">
+            <h2 class="text-3xl font-bold mb-8 section-title">DevOps & AI Integration</h2>
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- DevOps Tools -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-slate-200">CI/CD: Jenkins vs. GitHub Actions</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg text-indigo-400">Jenkins</h4>
+                            <p class="text-slate-300">The powerhouse of flexibility. Infinitely customizable with 1800+ plugins, but requires significant setup and maintenance. Best for complex, multi-tool enterprise pipelines.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-indigo-400">GitHub Actions</h4>
+                            <p class="text-slate-300">The champion of convenience. Natively integrated into GitHub with a simple YAML setup and a vast marketplace. Perfect for most projects hosted on GitHub.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- LLM Integration -->
+                <div class="card rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-slate-200">LLM Integration: OpenAI vs. Anthropic</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-lg text-indigo-400">OpenAI (GPT Models)</h4>
+                            <p class="text-slate-300">The versatile all-rounder. Unmatched ecosystem and broad capabilities for creative and analytical tasks. The go-to for general purpose AI and content generation.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-indigo-400">Anthropic (Claude Models)</h4>
+                            <p class="text-slate-300">The safety-focused reasoner. Excels at tasks requiring deep reasoning over large documents (200K context window) and in safety-critical domains.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cloud Generosity Chart
+            const cloudChartOptions = {
+                series: [{
+                    name: 'Generosity Score',
+                    data: [85, 95, 75, 98, 92, 90] // Arbitrary scores for visualization
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: { show: false },
+                    foreColor: '#94a3b8'
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: false,
+                        distributed: true,
+                        columnWidth: '55%',
+                    }
+                },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: ['Azure', 'Oracle Cloud', 'Cloudflare', 'Vercel', 'AWS', 'GCP'],
+                },
+                yaxis: {
+                    title: { text: 'Relative Generosity Score' }
+                },
+                colors: ['#818cf8', '#fb7185', '#f87171', '#a78bfa', '#facc15', '#4ade80'],
+                legend: { show: false },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " / 100"
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#334155'
+                }
+            };
+            const cloudChart = new ApexCharts(document.querySelector("#cloud-generosity-chart"), cloudChartOptions);
+            cloudChart.render();
+
+            // Framework Radar Chart
+            const frameworkRadarOptions = {
+                series: [{
+                    name: 'Next.js',
+                    data: [9, 7, 8, 9, 8],
+                }, {
+                    name: 'Angular',
+                    data: [8, 9, 9, 7, 9],
+                }, {
+                    name: 'Svelte',
+                    data: [9, 9, 7, 8, 6],
+                }, {
+                    name: 'Solid.js',
+                    data: [10, 8, 6, 6, 5],
+                }],
+                chart: {
+                    height: 380,
+                    type: 'radar',
+                    toolbar: { show: false },
+                    foreColor: '#94a3b8'
+                },
+                xaxis: {
+                    categories: ['Performance', 'Dev Experience', 'Security', 'Ecosystem', 'Enterprise Ready']
+                },
+                yaxis: { show: false },
+                stroke: { width: 2 },
+                fill: { opacity: 0.25 },
+                markers: { size: 4 },
+                colors: ['#4f46e5', '#db2777', '#f97316', '#22c55e'],
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center',
+                     markers: {
+                        fillColors: ['#4f46e5', '#db2777', '#f97316', '#22c55e']
+                    }
+                },
+                grid: {
+                    borderColor: '#334155'
+                }
+            };
+            const frameworkRadarChart = new ApexCharts(document.querySelector("#framework-radar-chart"), frameworkRadarOptions);
+            frameworkRadarChart.render();
+
+            // Database Comparison Chart
+            const dbChartOptions = {
+                series: [{
+                    name: 'PostgreSQL',
+                    data: [9, 8, 10, 9]
+                }, {
+                    name: 'MongoDB',
+                    data: [8, 10, 7, 10]
+                }, {
+                    name: 'Redis',
+                    data: [10, 7, 6, 8]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: { show: false },
+                    foreColor: '#94a3b8'
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        borderRadius: 4,
+                        barHeight: '50%',
+                    }
+                },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: ['Performance', 'Flexibility', 'Data Integrity', 'Scalability'],
+                },
+                colors: ['#38bdf8', '#4ade80', '#fb923c'],
+                legend: {
+                    position: 'top',
+                     markers: {
+                        fillColors: ['#38bdf8', '#4ade80', '#fb923c']
+                    }
+                },
+                grid: {
+                    borderColor: '#334155'
+                },
+                tooltip: {
+                    shared: true,
+                    intersect: false
+                }
+            };
+            const dbChart = new ApexCharts(document.querySelector("#database-comparison-chart"), dbChartOptions);
+            dbChart.render();
+        });
+    </script>
+
+</body>
+</html>
